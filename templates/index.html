@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flask on Wasmer</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 64px auto; max-width: 640px; padding: 0 24px; color: #202535; }
+    input, button { font: inherit; padding: 10px; }
+    button { cursor: pointer; }
+    output { display: block; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <h1>Flask on Wasmer</h1>
+  <p>Python + Flask のサンプルアプリです。</p>
+  <form id="greeting">
+    <label for="name">名前</label>
+    <input id="name" name="name" maxlength="100" placeholder="世界">
+    <button type="submit">あいさつする</button>
+  </form>
+  <output id="result" aria-live="polite"></output>
+  <p><a href="/healthz">ヘルスチェック</a></p>
+  <script>
+    document.querySelector('#greeting').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const output = document.querySelector('#result');
+      try {
+        const params = new URLSearchParams({name: document.querySelector('#name').value});
+        const response = await fetch(`/api/hello?${params}`);
+        const data = await response.json();
+        output.textContent = response.ok ? data.message : data.error;
+      } catch {
+        output.textContent = '通信に失敗しました。もう一度お試しください。';
+      }
+    });
+  </script>
+</body>
+</html>
